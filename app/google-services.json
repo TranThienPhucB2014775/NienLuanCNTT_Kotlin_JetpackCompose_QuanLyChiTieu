@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "68927855381",
+    "project_id": "nien-9835a",
+    "storage_bucket": "nien-9835a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:68927855381:android:af1648ff82e8fb6fb3671c",
+        "android_client_info": {
+          "package_name": "com.example.nln"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAoVLof5_ShZ0BMy9XbBfEr5K4eRg2oO60"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

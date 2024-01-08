@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">NLN</string>
+    <string name="FIREBASE_API_KEY">AIzaSyDV-k-sw1gsQcs1J66jKitWa3C8ikFoW4c</string>
+    <string name="FIREBASE_RTDB_URL">https://nien-9835a-default-rtdb.asia-southeast1.firebasedatabase.app/</string>
+</resources>

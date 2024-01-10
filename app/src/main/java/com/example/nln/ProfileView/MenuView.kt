@@ -32,7 +32,7 @@ import com.example.nln.ui.theme.cooperRegular
 fun MenuView(
     authTokenViewModel: AuthTokenViewModel,
     logout: () -> Unit,
-    isgetPicture: () -> Unit
+    isGetPicture: () -> Unit
 ) {
     Column(
         verticalArrangement = Arrangement.Center,
@@ -46,7 +46,7 @@ fun MenuView(
         ) {
             Box(
                 contentAlignment = Alignment.Center,
-                modifier = Modifier.clickable { isgetPicture() }
+                modifier = Modifier.clickable { isGetPicture() }
             ) {
                 Column(
                     verticalArrangement = Arrangement.Center,

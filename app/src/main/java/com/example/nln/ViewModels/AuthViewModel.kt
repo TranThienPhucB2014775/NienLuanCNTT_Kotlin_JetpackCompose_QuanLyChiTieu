@@ -5,6 +5,8 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.nln.ContextProvider
+import com.example.nln.R
 import com.example.nln.Services.SignInRequestBody
 import com.example.nln.Services.SignUpRequestBody
 import com.example.nln.Services.firebaseAuthService
@@ -13,9 +15,12 @@ import org.json.JSONObject
 
 class AuthViewModel : ViewModel() {
     private val _AuthState = mutableStateOf(AuthState())
+
     val authState: State<AuthState> = _AuthState
 
-    fun initAuthState(){
+    val apiKey = ContextProvider.getString(R.string.FIREBASE_API_KEY)
+
+    fun initAuthState() {
         _AuthState.value = _AuthState.value.copy(
             loading = true,
             message = "",
@@ -27,30 +32,10 @@ class AuthViewModel : ViewModel() {
         email: String,
         pass: String
     ) {
-//        viewModelScope.launch {
-//            FirebaseAuth.getInstance().createUserWithEmailAndPassword(email,pass).addOnCompleteListener {
-//                task->
-//                if (task.isSuccessful){
-//                    _AuthState.value = _AuthState.value.copy(
-//                        loading = false,
-//                        message = "You are create account \"${email}\" success",
-//                        error = ""
-//                        )
-//                    Log.d("121212",task.result.toString())
-//                }else{
-//                    _AuthState.value = _AuthState.value.copy(
-//                        loading = false,
-//                        message = task.exception!!.message.toString(),
-//                        error = ""
-//                    )
-//                    Log.d("121212",task.exception!!.message.toString())
-//                }
-//            }
-//        }
         viewModelScope.launch {
             try {
                 val signInResponse = firebaseAuthService.signInWithEmailAndPassword(
-                    "AIzaSyDV-k-sw1gsQcs1J66jKitWa3C8ikFoW4c",
+                    apiKey,
                     SignInRequestBody(email, pass)
                 )
                 val ress = JSONObject(signInResponse.string().trimIndent())
@@ -59,7 +44,6 @@ class AuthViewModel : ViewModel() {
                     message = ress.getString("localId"),
                     error = false
                 )
-//                Log.d("123456789", ress.getString("localId"))
             } catch (e: Exception) {
                 if (e.message.toString() == "HTTP 400 ") {
                     _AuthState.value = _AuthState.value.copy(
@@ -67,7 +51,7 @@ class AuthViewModel : ViewModel() {
                         message = "INVALID LOGIN CREDENTIALS",
                         error = true
                     )
-                } else if(e.message.toString() == "HTTP 404 ") {
+                } else if (e.message.toString() == "HTTP 404 ") {
                     _AuthState.value = _AuthState.value.copy(
                         loading = false,
                         message = "HAVE A PROBLEM WHEN CONNECT TO SERVER",
@@ -85,25 +69,9 @@ class AuthViewModel : ViewModel() {
         pass: String
     ) {
         viewModelScope.launch {
-//            FirebaseAuth.getInstance().signInWithEmailAndPassword(email, pass)
-//                .addOnCompleteListener { task ->
-//                    if (task.isSuccessful) {
-//                        _AuthState.value = _AuthState.value.copy(
-//                            loading = false,
-//                            message = "success",
-//                        )
-//                        Log.d("121212", task.result.toString())
-//                    } else {
-//                        _AuthState.value = _AuthState.value.copy(
-//                            loading = false,
-//                            message = task.exception!!.message.toString(),
-//                        )
-//                        Log.d("121212", task.exception!!.message.toString())
-//                    }
-//                }
             try {
                 val SignUpResponse = firebaseAuthService.createUserWithEmailAndPassword(
-                    "AIzaSyDV-k-sw1gsQcs1J66jKitWa3C8ikFoW4c",
+                    apiKey,
                     SignUpRequestBody(email, pass)
                 )
                 val ress = JSONObject(SignUpResponse.string().trimIndent())
@@ -120,7 +88,7 @@ class AuthViewModel : ViewModel() {
                         message = "Email has been used",
                         error = true
                     )
-                } else if(e.message.toString() == "HTTP 404 ") {
+                } else if (e.message.toString() == "HTTP 404 ") {
                     _AuthState.value = _AuthState.value.copy(
                         loading = false,
                         message = "HAVE A PROBLEM CONNECT TO SERVER",

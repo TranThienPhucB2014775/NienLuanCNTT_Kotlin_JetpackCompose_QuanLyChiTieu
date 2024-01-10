@@ -136,9 +136,7 @@ fun TransactionDetailView(
                         maxLines = if (heigh.value == 100.dp) 3 else 8
                     )
                 }
-
             }
-
         }
         Box(
             Modifier
@@ -162,7 +160,7 @@ fun TransactionDetailView(
                             Locale.getDefault()
                         ).format(expenseRecordFireBase.expenseRecord.date)
                     },
-                    Modifier.padding(start = 15.dp, top = 20.dp),
+                    Modifier.padding(start = 10.dp, top = 20.dp),
                     fontWeight = FontWeight.Normal,
                     fontFamily = cooperRegular,
                     fontSize = 20.sp,

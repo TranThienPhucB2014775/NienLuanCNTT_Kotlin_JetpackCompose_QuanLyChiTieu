@@ -40,7 +40,7 @@ fun MainView(
     context: Context
 ) {
     val navController = rememberNavController()
-    val expenseRecorViewModel: ExpenseRecorViewModel = ExpenseRecorViewModel(token)
+    val expenseRecorViewModel = ExpenseRecorViewModel(token)
     Scaffold(
         Modifier
             .background(colorResource(id = R.color.background))
@@ -103,7 +103,7 @@ fun MainView(
             }
             composable(Screen.DrawScreen.Stats.route) { StatsView(expenseRecorViewModel,context) }
             composable(Screen.DrawScreen.IncExp.route) { IncExpView(expenseRecorViewModel) }
-            composable(Screen.DrawScreen.Profile.route) { ProfileView(authTokenViewModel) }
+            composable(Screen.DrawScreen.Profile.route) { ProfileView(authTokenViewModel,context) }
             composable(
                 Screen.DrawScreen.AddEditInc.route + "/{id}",
                 arguments = listOf(

@@ -17,6 +17,7 @@ import kotlinx.coroutines.launch
 import java.util.Date
 
 class ExpenseRecorViewModel(val token: String) : ViewModel() {
+
     private val _expenseRecorState = mutableStateOf(RecipeState())
 
     val expenseRecorState: State<RecipeState> = _expenseRecorState

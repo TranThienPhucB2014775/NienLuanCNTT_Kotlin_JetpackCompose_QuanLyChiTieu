@@ -1,6 +1,9 @@
 package com.example.nln.Services
 
+import androidx.core.content.ContextCompat
+import com.example.nln.ContextProvider
 import com.example.nln.Models.ExpenseRecord
+import com.example.nln.R
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.POST
@@ -20,8 +23,12 @@ private val interceptor = HttpLoggingInterceptor().apply {
 
 private val client = OkHttpClient.Builder().addInterceptor(interceptor).build()
 
+
+val baseUrlExpense = ContextProvider.getString(R.string.FIREBASE_RTDB_URL)
+
+
 private val retrofit = Retrofit.Builder()
-    .baseUrl("https://nien-9835a-default-rtdb.asia-southeast1.firebasedatabase.app/")
+    .baseUrl(baseUrlExpense)
     .addConverterFactory(GsonConverterFactory.create())
     .client(client)
     .build()
@@ -37,7 +44,7 @@ interface FirebaseExpenseRecordService {
 
     @POST("/expenseRecors/{id}.json")
     suspend fun addExpenseRecor(
-        @Path("id") token:String,
+        @Path("id") token: String,
         @Query("auth") auth: String,
         @Body requestBody: ExpenseRecord
     ): ResponseBody
@@ -49,6 +56,7 @@ interface FirebaseExpenseRecordService {
         @Query("auth") auth: String,
         @Body requestBody: ExpenseRecord
     ): ResponseBody
+
     @DELETE("/expenseRecors/{token}/{id}.json")
     suspend fun deleteExpenseRecord(
         @Path("token") token: String,

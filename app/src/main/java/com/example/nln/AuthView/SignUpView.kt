@@ -35,6 +35,7 @@ import com.example.nln.R
 import com.example.nln.Screen
 import com.example.nln.ViewModels.AuthViewModel
 import com.example.nln.ui.theme.cooperRegular
+import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
@@ -201,6 +202,7 @@ fun SignUpView(navController: NavController, modifier: Modifier = Modifier) {
 
 }
 
+@OptIn(DelicateCoroutinesApi::class)
 private suspend fun validateForm(
     authViewModel: AuthViewModel,
     email: String,

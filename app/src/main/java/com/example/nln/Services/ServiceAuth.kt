@@ -1,5 +1,7 @@
 package com.example.nln.Services
 
+import com.example.nln.ContextProvider
+import com.example.nln.R
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.POST
@@ -14,6 +16,8 @@ private val interceptor = HttpLoggingInterceptor().apply {
 }
 
 private val client = OkHttpClient.Builder().addInterceptor(interceptor).build()
+
+val baseUrlAuth = ContextProvider.getString(R.string.FIREBASE_API_KEY)
 
 private val retrofit = Retrofit.Builder()
     .baseUrl("https://identitytoolkit.googleapis.com/v1/")

@@ -53,6 +53,7 @@ import com.example.nln.R
 import com.example.nln.ViewModels.AuthTokenViewModel
 import com.example.nln.ViewModels.ExpenseRecorViewModel
 import com.example.nln.ui.theme.cooperRegular
+import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
@@ -461,6 +462,7 @@ private fun convertMillisecondsToDate(milliseconds: Long): Date {
     return Date(milliseconds)
 }
 
+@OptIn(DelicateCoroutinesApi::class)
 private fun validateForm(
     id: String,
     expenseRecorViewModel: ExpenseRecorViewModel,

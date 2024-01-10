@@ -22,6 +22,7 @@ import com.example.nln.ui.theme.NLNTheme
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        ContextProvider.setContext(this)
 //        WindowCompat.setDecorFitsSystemWindows(window,false)
         setContent {
 

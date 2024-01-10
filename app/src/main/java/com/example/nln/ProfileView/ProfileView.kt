@@ -1,78 +1,140 @@
 package com.example.nln.ProfileView
 
-
-import android.app.Activity.RESULT_OK
-import android.content.Intent
+import android.annotation.SuppressLint
+import android.content.Context
 import android.net.Uri
-import android.provider.MediaStore
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material3.Button
-import androidx.compose.material3.Icon
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
+import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.rememberAsyncImagePainter
-import coil.compose.rememberImagePainter
 import com.example.nln.R
-import com.example.nln.Services.FirebaseService
-import com.example.nln.Services.ImageData
-import com.example.nln.Services.firebaseAuthServices
 import com.example.nln.ViewModels.AuthTokenViewModel
+import com.example.nln.ViewModels.StorageViewModel
 import com.example.nln.data.AuthToken
 import com.example.nln.ui.theme.cooperRegular
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.RequestBody.Companion.asRequestBody
+import java.io.File
+import java.io.FileOutputStream
 
+@SuppressLint("UnrememberedMutableState")
+@OptIn(DelicateCoroutinesApi::class)
 @Composable
 fun ProfileView(
-    authTokenViewModel: AuthTokenViewModel
+    authTokenViewModel: AuthTokenViewModel,
+    context: Context
 ) {
 
-    val email = authTokenViewModel.AuthToken.collectAsState(initial = AuthToken(0, ""))
+    val authToken = authTokenViewModel.AuthToken.collectAsState(initial = AuthToken(0, ""))
 
-    val imageUri = rememberSaveable {
+    val storageViewModel: StorageViewModel = viewModel()
+
+    val imageUri = remember {
         mutableStateOf("")
     }
-    val painter =
-        rememberAsyncImagePainter(imageUri.value.ifEmpty { "" })
+    var painterUrl =
+        context.getString(R.string.BUCKET_NAME) +
+                if (authToken.value.token.isEmpty()) "1" else authToken.value.token +
+                        ".jpg?alt=media"
 
-    val lancher =
+    var uriImg = Uri.parse(imageUri.value)
+
+    val isAddOrChangeAvatar = remember {
+        mutableStateOf(false)
+    }
+
+    val triggerImageRender = remember {
+        mutableStateOf(0)
+    }
+
+    if (isAddOrChangeAvatar.value) {
+        if (storageViewModel.storageState.value.loading) {
+            Dialog(onDismissRequest = {
+            }) {
+                Box(
+                    contentAlignment = Alignment.Center,
+                    modifier = Modifier
+                        .size(100.dp)
+                        .background(Color.White, shape = RoundedCornerShape(8.dp))
+                ) {
+                    CircularProgressIndicator(Modifier.height(50.dp))
+                }
+            }
+
+        } else {
+            if (!storageViewModel.storageState.value.error) {
+
+                Toast.makeText(context, "Avatar has been update", Toast.LENGTH_SHORT).show()
+
+            } else {
+                Toast.makeText(
+                    context,
+                    "Error, Please try again!",
+                    Toast.LENGTH_SHORT
+                ).show()
+                isAddOrChangeAvatar.value = false
+            }
+            isAddOrChangeAvatar.value = false
+        }
+    }
+
+    val launcher =
         rememberLauncherForActivityResult(contract = ActivityResultContracts.GetContent()) { uri: Uri? ->
-            uri.let { imageUri.value = it.toString() }
+            uri.let { it ->
+                imageUri.value = it.toString()
+                if (it != null) {
+                    uriImg = it
+                }
+                val filePath = getPathFromUri(
+                    context,
+                    uriImg
+                )
+                val file = filePath?.let { File(it) }
+
+                val requestFile =
+                    file?.asRequestBody("image/*".toMediaTypeOrNull())
+
+                if (requestFile != null) {
+                    isAddOrChangeAvatar.value = true
+                    GlobalScope.launch {
+                        storageViewModel.addStorage(requestFile, authToken.value.token)
+                    }
+                }
+            }
         }
 
     Box(
@@ -98,7 +160,9 @@ fun ProfileView(
                 contentAlignment = Alignment.Center
             ) {
                 Image(
-                    painter = painter,
+                    painter = rememberAsyncImagePainter(
+                        painterUrl,
+                    ),
                     contentDescription = "",
                     modifier = Modifier.fillMaxSize()
                 )
@@ -121,7 +185,7 @@ fun ProfileView(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = email.value.email, fontWeight = FontWeight.Bold,
+                text = authToken.value.email, fontWeight = FontWeight.Bold,
                 fontFamily = cooperRegular,
                 fontSize = 28.sp,
                 modifier = Modifier.padding(bottom = 16.dp)
@@ -146,9 +210,20 @@ fun ProfileView(
                     authTokenViewModel,
                     { authTokenViewModel.addAuthToken(AuthToken(1, "", "")) },
                     {
-                        lancher.launch("image/*")
-                        if(imageUri.value.isNotEmpty()){
-                            firebaseAuthServices.uploadImage(ImageData(imageUri.value))
+                        val myActivity = storageActivity(context)
+
+                        if (myActivity.checkStoragePermission()) {
+                            GlobalScope.launch {
+                                launcher.launch("image/*")
+                            }
+                        } else {
+                            Toast.makeText(
+                                context,
+                                "Permission to need grant",
+                                Toast.LENGTH_LONG
+                            )
+                                .show()
+                            myActivity.requestStoragePermission()
                         }
                     }
                 )
@@ -159,3 +234,26 @@ fun ProfileView(
         }
     }
 }
+
+fun getPathFromUri(context: Context, uri: Uri): String? {
+    var filePath: String? = null
+    try {
+        val inputStream = context.contentResolver.openInputStream(uri)
+        inputStream?.use { input ->
+            val outputFile = File(context.cacheDir, "tempFile.jpg")
+            val outputStream = FileOutputStream(outputFile)
+            input.copyTo(outputStream)
+            filePath = outputFile.absolutePath
+        }
+    } catch (e: Exception) {
+        e.printStackTrace()
+    }
+    return filePath
+}
+
+
+
+
+
+
+

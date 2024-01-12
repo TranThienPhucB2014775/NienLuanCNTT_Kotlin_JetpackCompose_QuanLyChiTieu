@@ -10,7 +10,7 @@ android {
 
     defaultConfig {
         applicationId = "com.example.nln"
-        minSdk = 24
+        minSdk = 26
         targetSdk = 33
         versionCode = 1
         versionName = "1.0"
@@ -59,7 +59,7 @@ dependencies {
     implementation ("androidx.appcompat:appcompat:1.6.1")
 
     implementation ("io.coil-kt:coil-compose:2.4.0")
-    implementation ("com.github.skydoves:landscapist-glide:1.5.2")
+//    implementation ("com.github.skydoves:landscapist-glide:1.5.2")
 
     implementation ("com.squareup.okhttp3:logging-interceptor:4.9.1")
 
@@ -67,14 +67,13 @@ dependencies {
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
     implementation("io.coil-kt:coil-compose:2.4.0")
 
-    implementation("androidx.room:room-runtime:2.6.1")
-    implementation("androidx.room:room-ktx:2.6.1")
-    kapt("androidx.room:room-compiler:2.6.1")
+    implementation("androidx.room:room-runtime:2.6.0")
+    implementation("androidx.room:room-ktx:2.6.0")
+    kapt("androidx.room:room-compiler:2.6.0")
 
-    implementation ("com.google.accompanist:accompanist-systemuicontroller:0.27.0")
-    implementation ("androidx.navigation:navigation-compose:2.7.6")
+//    implementation ("com.google.accompanist:accompanist-systemuicontroller:0.27.0")
 
-    implementation("androidx.navigation:navigation-compose:2.7.6")
+    implementation("androidx.navigation:navigation-compose:2.7.5")
     implementation("androidx.compose.ui:ui:1.6.0-beta03")
     implementation("androidx.compose.material:material:1.6.0-beta03")
     implementation("androidx.compose.ui:ui-tooling-android:1.6.0-beta03")

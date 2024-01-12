@@ -31,6 +31,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -45,6 +46,7 @@ import com.example.nln.data.AuthToken
 import com.example.nln.ui.theme.cooperRegular
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody.Companion.asRequestBody
@@ -97,16 +99,13 @@ fun ProfileView(
 
         } else {
             if (!storageViewModel.storageState.value.error) {
-
                 Toast.makeText(context, "Avatar has been update", Toast.LENGTH_SHORT).show()
-
             } else {
                 Toast.makeText(
                     context,
                     "Error, Please try again!",
                     Toast.LENGTH_SHORT
                 ).show()
-                isAddOrChangeAvatar.value = false
             }
             isAddOrChangeAvatar.value = false
         }
@@ -141,7 +140,7 @@ fun ProfileView(
         Modifier
             .fillMaxWidth()
             .height(330.dp)
-            .background(Color.White),
+            .background(colorResource(id = R.color.background)),
         contentAlignment = Alignment.Center
     ) {
         Column(
@@ -163,6 +162,7 @@ fun ProfileView(
                     painter = rememberAsyncImagePainter(
                         painterUrl,
                     ),
+                    contentScale = ContentScale.Crop,
                     contentDescription = "",
                     modifier = Modifier.fillMaxSize()
                 )
@@ -175,8 +175,8 @@ fun ProfileView(
             .padding(top = 300.dp)
 //            .height(700.dp)
             .background(
-                colorResource(id = R.color.backgroundProfile),
-                shape = RoundedCornerShape(50.dp, 50.dp, 0.dp, 0.dp)
+                colorResource(id = R.color.background),
+//                shape = RoundedCornerShape(50.dp, 50.dp, 0.dp, 0.dp)
             ),
         contentAlignment = Alignment.Center
     ) {
@@ -210,9 +210,9 @@ fun ProfileView(
                     authTokenViewModel,
                     { authTokenViewModel.addAuthToken(AuthToken(1, "", "")) },
                     {
-                        val myActivity = storageActivity(context)
+                        val storageActivity = StorageActivity(context)
 
-                        if (myActivity.checkStoragePermission()) {
+                        if (storageActivity.checkStoragePermission()) {
                             GlobalScope.launch {
                                 launcher.launch("image/*")
                             }
@@ -223,7 +223,7 @@ fun ProfileView(
                                 Toast.LENGTH_LONG
                             )
                                 .show()
-                            myActivity.requestStoragePermission()
+                            storageActivity.requestStoragePermission()
                         }
                     }
                 )

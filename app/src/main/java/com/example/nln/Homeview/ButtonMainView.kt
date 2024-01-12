@@ -5,11 +5,15 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+//noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.Icon
+//noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -26,18 +30,23 @@ import com.example.nln.R
 import com.example.nln.ui.theme.cooperRegular
 
 @Composable
-fun ButtonMainViewRight(Icome: () -> Unit) {
+fun ButtonMainViewRight(income: () -> Unit) {
     Row(
-        Modifier.shadow(
-            elevation = 5.dp,
-            ambientColor = Color.Gray,
-            spotColor = Color.Black,
-            shape = RoundedCornerShape(50.dp),
-        )
+        Modifier
+            .padding(end = 10.dp)
+            .shadow(
+                elevation = 5.dp,
+                ambientColor = Color.Gray,
+                spotColor = Color.Black,
+                shape = RoundedCornerShape(50.dp),
+            )
     ) {
         Box(
             modifier = Modifier
-                .size(180.dp, 100.dp)
+
+//                .size(175.dp, 100.dp)
+                .height(100.dp)
+                .fillMaxWidth()
                 .background(
                     brush = Brush.horizontalGradient(
                         colors = listOf(Color(0xFFF28263), Color(0xFFF58458)),
@@ -46,7 +55,7 @@ fun ButtonMainViewRight(Icome: () -> Unit) {
                     ), shape = RoundedCornerShape(50.dp)
                 )
                 .clickable {
-                    Icome()
+                    income()
                 },
             contentAlignment = Alignment.Center
         ) {
@@ -87,18 +96,22 @@ fun ButtonMainViewRight(Icome: () -> Unit) {
 }
 
 @Composable
-fun ButtonMainViewLeft(Expenditure: () -> Unit) {
+fun ButtonMainViewLeft(expenditure: () -> Unit) {
     Row(
-        Modifier.shadow(
-            elevation = 5.dp,
-            ambientColor = Color.Gray,
-            spotColor = Color.Black,
-            shape = RoundedCornerShape(50.dp),
-        )
+        Modifier
+            .padding(start = 10.dp)
+            .shadow(
+                elevation = 5.dp,
+                ambientColor = Color.Gray,
+                spotColor = Color.Black,
+                shape = RoundedCornerShape(50.dp),
+            )
     ) {
         Box(
             modifier = Modifier
-                .size(180.dp, 100.dp)
+                .height(100.dp)
+                .fillMaxWidth()
+//                .size(175.dp, 100.dp)
                 .background(
                     brush = Brush.horizontalGradient(
                         colors = listOf(Color(0xFFF28263), Color(0xFFF58458)),
@@ -107,7 +120,7 @@ fun ButtonMainViewLeft(Expenditure: () -> Unit) {
                     ), shape = RoundedCornerShape(50.dp)
                 )
                 .clickable {
-                    Expenditure()
+                    expenditure()
                 },
             contentAlignment = Alignment.Center
         ) {

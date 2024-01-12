@@ -98,7 +98,8 @@ fun MainView(
                 HomeView(
                     navController,
                     authTokenViewModel,
-                    expenseRecorViewModel
+                    expenseRecorViewModel,
+                    context
                 )
             }
             composable(Screen.DrawScreen.Stats.route) { StatsView(expenseRecorViewModel,context) }

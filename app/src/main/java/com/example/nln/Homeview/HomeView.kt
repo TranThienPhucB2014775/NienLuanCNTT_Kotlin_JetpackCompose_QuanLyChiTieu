@@ -1,13 +1,19 @@
 package com.example.nln.Homeview
 
+import android.content.Context
+import android.util.DisplayMetrics
+import android.view.WindowManager
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -29,6 +35,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
+import coil.compose.rememberAsyncImagePainter
 import com.example.nln.R
 import com.example.nln.Screen
 import com.example.nln.ViewModels.AuthTokenViewModel
@@ -43,9 +50,18 @@ import java.util.Locale
 fun HomeView(
     navController: NavController,
     authTokenViewModel: AuthTokenViewModel,
-    expenseRecorViewModel: ExpenseRecorViewModel
+    expenseRecorViewModel: ExpenseRecorViewModel,
+    context: Context
 ) {
-    val AuthToken = authTokenViewModel.AuthToken.collectAsState(initial = AuthToken(0, ""))
+
+
+    val authToken = authTokenViewModel.AuthToken.collectAsState(initial = AuthToken(0, ""))
+
+    var painterUrl =
+        context.getString(R.string.BUCKET_NAME) +
+                if (authToken.value.token.isEmpty()) "1" else authToken.value.token +
+                        ".jpg?alt=media"
+
     Column(
         Modifier
             .fillMaxSize()
@@ -57,7 +73,9 @@ fun HomeView(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Image(
-                painter = painterResource(id = R.drawable.baseline_privacy_tip_24),
+                painter = rememberAsyncImagePainter(
+                    painterUrl,
+                ),
                 contentDescription = "",
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
@@ -70,7 +88,7 @@ fun HomeView(
                     .clip(CircleShape)
             )
             Text(
-                text = AuthToken.value.email,
+                text = authToken.value.email,
                 fontWeight = FontWeight.ExtraBold,
                 modifier = Modifier.padding(start = 8.dp),
                 fontFamily = cooperRegular,
@@ -97,26 +115,41 @@ fun HomeView(
             fontSize = 32.sp
         )
         Spacer(modifier = Modifier.height(25.dp))
-        Row {
-            ButtonMainViewRight() {
-                navController.navigate(Screen.DrawScreen.AddEditInc.route + "/empty") {
-                    popUpTo(navController.graph.findStartDestination().id) {
-                        saveState = true
+        Row(
+            modifier = Modifier
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+            ) {
+                ButtonMainViewRight() {
+                    navController.navigate(Screen.DrawScreen.AddEditInc.route + "/empty") {
+                        popUpTo(navController.graph.findStartDestination().id) {
+                            saveState = true
+                        }
+                        launchSingleTop = true
+                        restoreState = true
                     }
-                    launchSingleTop = true
-                    restoreState = true
                 }
             }
-            Spacer(modifier = Modifier.width(20.dp))
-            ButtonMainViewLeft() {
-                navController.navigate(Screen.DrawScreen.AddEditExp.route + "/empty") {
-                    popUpTo(navController.graph.findStartDestination().id) {
-                        saveState = true
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+
+            ) {
+                ButtonMainViewLeft() {
+                    navController.navigate(Screen.DrawScreen.AddEditExp.route + "/empty") {
+                        popUpTo(navController.graph.findStartDestination().id) {
+                            saveState = true
+                        }
+                        launchSingleTop = true
+                        restoreState = true
                     }
-                    launchSingleTop = true
-                    restoreState = true
                 }
             }
+
         }
         Spacer(modifier = Modifier.height(25.dp))
         Text(

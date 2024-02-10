@@ -1,9 +1,13 @@
 package com.example.nln.Stats
 
 import android.content.Context
+import android.util.Log
+import android.widget.ScrollView
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.clipScrollableContainer
+import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,8 +23,10 @@ import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material.Divider
 import androidx.compose.material.OutlinedTextField
@@ -35,6 +41,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -72,10 +79,10 @@ fun StatsView(
     val showDialog = remember {
         mutableStateOf(false)
     }
-    val dateTo = remember {
+    val dateFrom = remember {
         mutableStateOf(Date())
     }
-    val dateFrom = remember {
+    val dateTo = remember {
         mutableStateOf(Date())
     }
     val moneyTo = remember {
@@ -98,7 +105,9 @@ fun StatsView(
     }
 
     val expenseRecords = remember {
-        mutableStateOf(expenseRecorViewModel.expenseRecorState.value.list.copy())
+        mutableStateOf(
+            expenseRecorViewModel.expenseRecorState.value.list.copy()
+        )
     }
 
     val content = remember {
@@ -106,7 +115,9 @@ fun StatsView(
     }
 
     val datePickerStateTo = rememberDatePickerState()
+
     val datePickerStateFrom = rememberDatePickerState()
+
     if (showDateTo.value) {
         DatePickerDialog(
             onDismissRequest = { showDateTo.value = false },
@@ -163,15 +174,16 @@ fun StatsView(
             content.value = ""
         }
     }
+//    ScrollView(context)
     Column(
         Modifier
             .fillMaxSize()
             .background(colorResource(id = R.color.background))
             .windowInsetsPadding(WindowInsets.statusBars)
-            .padding(top = 50.dp, start = 16.dp, end = 16.dp),
+            .padding(top = 10.dp, start = 16.dp, end = 16.dp),
+//            .verticalScroll(rememberScrollState())
         horizontalAlignment = Alignment.CenterHorizontally,
-
-        ) {
+    ) {
 
         Row(
             verticalAlignment = Alignment.CenterVertically
@@ -251,7 +263,10 @@ fun StatsView(
                         expenseRecorViewModel.getInc(expenseRecords.value)
                     ).toList()
                 ) { (key, value) ->
-                    Row(verticalAlignment = Alignment.CenterVertically) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+//                        modifier = Modifier.height(25.dp)
+                    ) {
                         Text(
                             text = value.name,
                             fontWeight = FontWeight.Normal,
@@ -310,8 +325,6 @@ fun StatsView(
             }
         }
 
-
-
         Row {
             OutlinedTextField(
                 value = formatDateToString(dateFrom.value),
@@ -323,7 +336,7 @@ fun StatsView(
                 },
                 modifier = Modifier
                     .padding(top = 10.dp)
-                    .width(190.dp)
+                    .weight(0.35f)
                     .height(60.dp)
                     .padding(start = 15.dp, end = 15.dp)
                     .clickable {
@@ -349,7 +362,7 @@ fun StatsView(
                 },
                 modifier = Modifier
                     .padding(top = 10.dp)
-                    .width(190.dp)
+                    .weight(0.35f)
                     .height(60.dp)
                     .padding(start = 15.dp, end = 15.dp)
                     .clickable {
@@ -376,7 +389,7 @@ fun StatsView(
                 },
                 modifier = Modifier
                     .padding(top = 10.dp)
-                    .width(190.dp)
+                    .weight(0.35f)
                     .height(60.dp)
                     .padding(start = 15.dp, end = 15.dp),
                 shape = RoundedCornerShape(30.dp),
@@ -399,7 +412,7 @@ fun StatsView(
                 },
                 modifier = Modifier
                     .padding(top = 10.dp)
-                    .width(190.dp)
+                    .weight(0.35f)
                     .height(60.dp)
                     .padding(start = 15.dp, end = 15.dp),
                 shape = RoundedCornerShape(30.dp),
@@ -419,6 +432,7 @@ fun StatsView(
             OutlinedTextField(
                 value = purpose.value,
                 onValueChange = {
+
                 },
                 label = {
                     androidx.compose.material.Text(
@@ -442,6 +456,7 @@ fun StatsView(
                 singleLine = true,
                 enabled = false
             )
+
             DropdownMenu(
                 expanded = showType.value,
                 onDismissRequest = { showType.value = false }) {
@@ -517,117 +532,160 @@ fun StatsView(
                     })
             }
         }
-        Button(
-            onClick = {
-                showDialog.value = validateDate(dateFrom.value, dateTo.value) {
-                    content.value = it
-                }
-                if (!showDialog.value) {
-                    expenseRecords.value = expenseRecorViewModel.averageDate(
-                        expenseRecords.value,
-                        dateFrom.value.time,
-                        dateTo.value.time
-                    )
-                }
-            },
-            modifier = Modifier
-                .width(180.dp)
-                .height(60.dp)
-                .padding(start = 15.dp, end = 15.dp, top = 10.dp),
-            colors = ButtonDefaults.buttonColors(colorResource(id = R.color.boderimage)),
-            shape = RoundedCornerShape(30.dp),
-        ) {
-            Text(
-                text = "Date",
-                textAlign = TextAlign.Center,
-                color = Color.White,
-                fontFamily = cooperRegular,
-                fontSize = 24.sp
 
-            )
-        }
-        Button(
-            onClick = {
-                showDialog.value = moneyFrom.value?.let {
-                    moneyTo.value?.let { it1 ->
-                        validateMoney(it.toDouble(), it1.toDouble()) {
-                            content.value = it
-                        }
+        Spacer(modifier = Modifier.height(10.dp))
+
+        Row {
+            Button(
+                onClick = {
+                    showDialog.value = validateDate(dateFrom.value, dateTo.value) {
+                        content.value = it
                     }
-                } == false
-                if (!showDialog.value) {
-                    expenseRecords.value = moneyFrom.value?.let {
-                        moneyTo.value?.let { it1 ->
-                            expenseRecorViewModel.averageMoney(
-                                expenseRecords.value,
-                                it.toDouble(),
-                                it1.toDouble(),
-                            )
-                        }
-                    }!!
-                }
-            },
-            modifier = Modifier
-                .width(180.dp)
-                .height(60.dp)
-                .padding(start = 15.dp, end = 15.dp, top = 10.dp),
-            colors = ButtonDefaults.buttonColors(colorResource(id = R.color.boderimage)),
-            shape = RoundedCornerShape(30.dp),
-        ) {
-            Text(
-                text = "Money",
-                textAlign = TextAlign.Center,
-                color = Color.White,
-                fontFamily = cooperRegular,
-                fontSize = 24.sp
+                    if (!showDialog.value) {
+                        expenseRecords.value = expenseRecorViewModel.averageDate(
+                            expenseRecords.value,
+                            dateFrom.value.time,
+                            dateTo.value.time
+                        )
+                        Log.d(
+                            "66666666", expenseRecorViewModel.averagePurposeIncome(
+                                expenseRecorViewModel.getInc(expenseRecords.value)
+                            ).toString()
+                        )
+                        Log.d(
+                            "66666666",
+                            expenseRecorViewModel.getExp(expenseRecords.value).toString()
+                        )
+                        Log.d(
+                            "66666666", expenseRecorViewModel.averagePurposeExpenses(
+                                expenseRecorViewModel.getExp(expenseRecords.value)
+                            ).toString()
+                        )
 
-            )
-        }
-        Button(
-            onClick = {
-                expenseRecords.value = expenseRecorViewModel.averagePurpose(
-                    expenseRecords.value,
-                    purpose.value
+                    }
+                },
+                modifier = Modifier
+                    .weight(0.35f)
+                    .height(45.dp),
+//                    .padding(top = 10.dp),
+                colors = ButtonDefaults.buttonColors(colorResource(id = R.color.boderimage)),
+                shape = RoundedCornerShape(30.dp),
+            ) {
+                Text(
+                    text = "Date",
+                    textAlign = TextAlign.Center,
+                    color = Color.White,
+                    fontFamily = cooperRegular,
+                    fontSize = 24.sp
+
                 )
-            },
-            modifier = Modifier
-                .width(180.dp)
-                .height(60.dp)
-                .padding(start = 15.dp, end = 15.dp, top = 10.dp),
-            colors = ButtonDefaults.buttonColors(colorResource(id = R.color.boderimage)),
-            shape = RoundedCornerShape(30.dp),
-        ) {
-            Text(
-                text = "Purpose",
-                textAlign = TextAlign.Center,
-                color = Color.White,
-                fontFamily = cooperRegular,
-                fontSize = 24.sp
-
-            )
+            }
+            Spacer(modifier = Modifier.weight(0.05f))
+            Button(
+                onClick = {
+                    showDialog.value = moneyFrom.value?.let {
+                        moneyTo.value?.let { it1 ->
+                            validateMoney(it.toDouble(), it1.toDouble()) {
+                                content.value = it
+                            }
+                        }
+                    } == false
+                    if (!showDialog.value) {
+                        expenseRecords.value = moneyFrom.value?.let {
+                            moneyTo.value?.let { it1 ->
+                                expenseRecorViewModel.averageMoney(
+                                    expenseRecords.value,
+                                    it.toDouble(),
+                                    it1.toDouble(),
+                                )
+                            }
+                        }!!
+                        Log.d(
+                            "66666666", expenseRecorViewModel.averagePurposeIncome(
+                                expenseRecorViewModel.getInc(expenseRecords.value)
+                            ).toString()
+                        )
+                        Log.d(
+                            "66666666", expenseRecorViewModel.averagePurposeExpenses(
+                                expenseRecorViewModel.getExp(expenseRecords.value)
+                            ).toString()
+                        )
+                    }
+                },
+                modifier = Modifier
+                    .weight(0.35f)
+                    .height(45.dp),
+//                    .padding(top = 10.dp),
+                colors = ButtonDefaults.buttonColors(colorResource(id = R.color.boderimage)),
+                shape = RoundedCornerShape(30.dp),
+            ) {
+                Text(
+                    text = "Money",
+                    textAlign = TextAlign.Center,
+                    color = Color.White,
+                    fontFamily = cooperRegular,
+                    fontSize = 24.sp
+                )
+            }
         }
-        Button(
-            onClick = {
-                expenseRecords.value = expenseRecorViewModel.expenseRecorState.value.list.copy()
+        Spacer(modifier = Modifier.height(10.dp))
+        Row {
+            Button(
+                onClick = {
+                    expenseRecords.value = expenseRecorViewModel.averagePurpose(
+                        expenseRecords.value,
+                        purpose.value
+                    )
+                    Log.d(
+                        "66666666", expenseRecorViewModel.averagePurposeIncome(
+                            expenseRecorViewModel.getInc(expenseRecords.value)
+                        ).toString()
+                    )
+                    Log.d(
+                        "66666666", expenseRecorViewModel.averagePurposeExpenses(
+                            expenseRecorViewModel.getExp(expenseRecords.value)
+                        ).toString()
+                    )
+                },
+                modifier = Modifier
+                    .weight(0.35f)
+                    .height(45.dp),
+                colors = ButtonDefaults.buttonColors(colorResource(id = R.color.boderimage)),
+                shape = RoundedCornerShape(30.dp),
+            ) {
+                Text(
+                    text = "Purpose",
+                    textAlign = TextAlign.Center,
+                    color = Color.White,
+                    fontFamily = cooperRegular,
+                    fontSize = 24.sp
+
+                )
+            }
+            Spacer(modifier = Modifier.weight(0.05f))
+            Button(
+                onClick = {
+                    expenseRecords.value = expenseRecorViewModel.expenseRecorState.value.list.copy()
 //                val toast = Toast.makeText(context, "This is a toast message", Toast.LENGTH_SHORT)
 //                toast.show()
 
-            },
-            modifier = Modifier
-                .width(180.dp)
-                .height(60.dp)
-                .padding(start = 15.dp, end = 15.dp, top = 10.dp),
-            colors = ButtonDefaults.buttonColors(colorResource(id = R.color.boderimage)),
-            shape = RoundedCornerShape(30.dp),
-        ) {
-            Text(
-                text = "Reset",
-                textAlign = TextAlign.Center,
-                color = Color.White,
-                fontFamily = cooperRegular,
-                fontSize = 24.sp
-
-            )
+                },
+                modifier = Modifier
+                    .weight(0.35f)
+                    .height(45.dp),
+//                    .padding(start = 15.dp, end = 15.dp, top = 10.dp),
+                colors = ButtonDefaults.buttonColors(colorResource(id = R.color.boderimage)),
+                shape = RoundedCornerShape(30.dp),
+            ) {
+                Text(
+                    text = "Reset",
+                    textAlign = TextAlign.Center,
+                    color = Color.White,
+                    fontFamily = cooperRegular,
+                    fontSize = 24.sp,
+//                    TextStyle =
+                )
+            }
         }
     }
 
@@ -642,6 +700,7 @@ fun DialogView(
         onDismissRequest = {
             showDiaLog()
         },
+//        modifier = Modifier.background(),
         confirmButton = {
             TextButton(
                 onClick = {
@@ -666,11 +725,12 @@ fun DialogView(
             )
         },
         text = {
-            androidx.compose.material.Text(
+            Text(
                 text = content,
                 fontFamily = cooperRegular,
                 fontWeight = FontWeight.Normal,
-                fontSize = 20.sp
+                fontSize = 20.sp,
+                color = colorResource(id = R.color.boderimage)
             )
         },
     )
@@ -693,10 +753,11 @@ private fun validateDate(
     setContent: (String) -> Unit
 ): Boolean {
     return if (dateFrom.time <= dateTo.time) {
-        setContent("Date to must bigger than date from")
         false
-    } else
+    } else {
+        setContent("Date to must bigger than date from")
         true
+    }
 }
 
 private fun validateMoney(

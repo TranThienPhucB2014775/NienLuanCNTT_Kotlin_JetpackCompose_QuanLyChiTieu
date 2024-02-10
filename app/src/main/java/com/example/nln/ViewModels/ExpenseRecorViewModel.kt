@@ -1,5 +1,6 @@
 package com.example.nln.ViewModels
 
+import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -151,9 +152,9 @@ class ExpenseRecorViewModel(val token: String) : ViewModel() {
     fun averagePurposeIncome(expenseRecords: ExpenseRecords): Map<String, Purpose> {
         val purposeCounts = purposesIncome.toMap()
 
-        expenseRecords.expenseRecords.forEach {
-            val purpose = it.expenseRecord.purpose
-            purposeCounts[purpose]?.quantity = 0
+        purposeCounts.forEach {
+//            val purpose = it..purpose
+            purposeCounts[it.value.name]?.quantity = 0
         }
 
         expenseRecords.expenseRecords.forEach {
@@ -164,12 +165,14 @@ class ExpenseRecorViewModel(val token: String) : ViewModel() {
     }
 
     fun averagePurposeExpenses(expenseRecords: ExpenseRecords): Map<String, Purpose> {
-        val purposeCounts = purposesExpenses.toMap().toMutableMap()
+        val purposeCounts = purposesExpenses.toMap()
 
-        expenseRecords.expenseRecords.forEach {
-            val purpose = it.expenseRecord.purpose
-            purposeCounts[purpose]?.quantity = 0
+        purposeCounts.forEach {
+//            val purpose = it..purpose
+            purposeCounts[it.value.name]?.quantity = 0
         }
+
+        Log.d("6666667",purposeCounts.toString())
         expenseRecords.expenseRecords.forEach {
             val purpose = it.expenseRecord.purpose
             purposeCounts[purpose]?.quantity = purposeCounts[purpose]?.quantity!! + 1

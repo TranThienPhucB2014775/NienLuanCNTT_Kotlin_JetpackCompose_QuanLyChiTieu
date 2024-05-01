@@ -1,5 +1,6 @@
 package com.example.nln.IncExpView
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -28,15 +29,21 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavGraph.Companion.findStartDestination
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
+import com.example.nln.AddEditIncExp.AddEditDetailView
 import com.example.nln.R
 import com.example.nln.ViewModels.ExpenseRecorViewModel
 import com.example.nln.Partials.ListTransactionView
+import com.example.nln.Screen
+import com.example.nln.ViewModels.AuthTokenViewModel
 
 @Composable
 fun IncExpView(
+    authTokenViewModel: AuthTokenViewModel,
     expenseRecorViewModel: ExpenseRecorViewModel
 ) {
     val selected = remember {
@@ -140,7 +147,30 @@ fun IncExpView(
                         expenseRecorViewModel,
                     )
                 }
+                composable(
+                    Screen.DrawScreen.AddEditInc.route + "/{id}",
+                    arguments = listOf(
+                        navArgument("id") {
+                            type = NavType.StringType
+                            defaultValue = "0"
+                            nullable = false
+                        })
+                ) {
 
+                    val id = if(it.arguments != null) it.arguments!!.getString("id") else "empty"
+                    if (id != null) {
+                        Log.d("aaaaaaaaaaaaaaaaaa",id)
+                    }
+                    if (id != null) {
+                        AddEditDetailView(
+                            navController,
+                            authTokenViewModel,
+                            expenseRecorViewModel,
+                            true,
+                            id= id,
+                        )
+                    }
+                }
             }
         }
     }

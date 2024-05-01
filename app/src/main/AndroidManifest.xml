@@ -17,9 +17,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.NLN"
         tools:targetApi="31">
-        <meta-data
-            android:name="com.google.android.actions"
-            android:resource="@xml/style" />
+<!--        <meta-data-->
+<!--            android:name="com.google.android.actions"-->
+<!--            android:resource="@xml/style" />-->
 
         <activity
 

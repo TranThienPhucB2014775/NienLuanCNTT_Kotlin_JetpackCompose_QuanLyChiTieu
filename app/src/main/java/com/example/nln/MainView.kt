@@ -1,6 +1,7 @@
 package com.example.nln
 
 import android.content.Context
+import android.util.Log
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.height
@@ -103,7 +104,7 @@ fun MainView(
                 )
             }
             composable(Screen.DrawScreen.Stats.route) { StatsView(expenseRecorViewModel,context) }
-            composable(Screen.DrawScreen.IncExp.route) { IncExpView(expenseRecorViewModel) }
+            composable(Screen.DrawScreen.IncExp.route) { IncExpView(authTokenViewModel,expenseRecorViewModel) }
             composable(Screen.DrawScreen.Profile.route) { ProfileView(authTokenViewModel,context) }
             composable(
                 Screen.DrawScreen.AddEditInc.route + "/{id}",
@@ -114,7 +115,11 @@ fun MainView(
                         nullable = false
                     })
             ) {
+
                 val id = if(it.arguments != null) it.arguments!!.getString("id") else "empty"
+                if (id != null) {
+                    Log.d("aaaaaaaaaaaaaaaaaa",id)
+                }
                 if (id != null) {
                     AddEditDetailView(
                         navController,

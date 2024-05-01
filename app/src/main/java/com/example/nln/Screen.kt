@@ -38,9 +38,6 @@ sealed class Screen(val title: String, val route: String) {
             "AddEditExp",
             R.drawable.baseline_assignment_24
         )
-
-
-
         object Login : DrawScreen(
             "Login",
             "Login",

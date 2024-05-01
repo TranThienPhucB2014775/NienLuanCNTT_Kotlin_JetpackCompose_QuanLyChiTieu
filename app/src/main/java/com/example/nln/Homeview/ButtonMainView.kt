@@ -77,7 +77,7 @@ fun ButtonMainViewRight(income: () -> Unit) {
                         tint = Color.White
                     )
                 }
-                Spacer(modifier = Modifier.width(10.dp))
+                Spacer(modifier = Modifier.width(5.dp))
                 Text(
                     text = "INC",
                     fontWeight = FontWeight.ExtraBold,

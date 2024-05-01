@@ -1,5 +1,6 @@
 package com.example.nln.Partials
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -185,13 +186,13 @@ fun TransactionDetailView(
                 ) {
                     IconButton(onClick = { showDiaLog.value = true }) {
                         Icon(
-                            imageVector = Icons.Default.Delete, contentDescription = "edit",
+                            imageVector = Icons.Default.Delete, contentDescription = "delete",
                             tint = Color.Black
                         )
                     }
                     IconButton(
                         onClick = {
-                            navController.navigate(Screen.DrawScreen.AddEditInc.route + "/${expenseRecordFireBase.id}") {
+                            navController.navigate("${Screen.DrawScreen.AddEditInc.route}/${expenseRecordFireBase.id}") {
                                 popUpTo(navController.graph.findStartDestination().id) {
                                     saveState = true
                                 }
